@@ -1,10 +1,25 @@
-import React, { useState } from "react";
+import { queryByTestId } from "@testing-library/react";
+import React, { useState, useEffect } from "react";
 
 function Question({ question, onAnswered }) {
   const [timeRemaining, setTimeRemaining] = useState(10);
 
   // add useEffect code
+  useEffect(() => {
+    if (timeRemaining > 0) {
+      const timerID = setTimeout(() => {
+        setTimeRemaining(timeRemaining - 1);
+      }, 1000);
 
+      return () => clearTimeout(timerID); // Cleanup timer on component unmount or reset
+    } else {
+      onAnswered(false); // Time's up, answer is considered incorrect
+    }
+  }, [timeRemaining, onAnswered]);
+
+  useEffect(() => {
+    setTimeRemaining(10);  // Reset timer when a new question is loaded
+  }, [question]);
   function handleAnswer(isCorrect) {
     setTimeRemaining(10);
     onAnswered(isCorrect);
